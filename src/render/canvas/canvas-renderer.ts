@@ -1,45 +1,45 @@
-import {ElementPaint, parseStackingContexts, StackingContext} from '../stacking-context';
-import {asString, Color, isTransparent} from '../../css/types/color';
-import {Logger} from '../../core/logger';
-import {ElementContainer} from '../../dom/element-container';
-import {BORDER_STYLE} from '../../css/property-descriptors/border-style';
-import {CSSParsedDeclaration} from '../../css/index';
-import {TextContainer} from '../../dom/text-container';
-import {Path, transformPath} from '../path';
-import {BACKGROUND_CLIP} from '../../css/property-descriptors/background-clip';
-import {BoundCurves, calculateBorderBoxPath, calculateContentBoxPath, calculatePaddingBoxPath} from '../bound-curves';
-import {isBezierCurve} from '../bezier-curve';
-import {Vector} from '../vector';
-import {CSSImageType, CSSLinearGradientImage, CSSRadialGradientImage, CSSURLImage, isLinearGradient, isRadialGradient} from '../../css/types/image';
-import {parsePathForBorder} from '../border';
-import {Cache} from '../../core/cache-storage';
-import {calculateBackgroundRendering, getBackgroundValueForIndex} from '../background';
-import {isDimensionToken} from '../../css/syntax/parser';
-import {TextBounds} from '../../css/layout/text';
-import {fromCodePoint, toCodePoints} from 'css-line-break';
-import {ImageElementContainer} from '../../dom/replaced-elements/image-element-container';
-import {contentBox} from '../box-sizing';
-import {CanvasElementContainer} from '../../dom/replaced-elements/canvas-element-container';
-import {SVGElementContainer} from '../../dom/replaced-elements/svg-element-container';
-import {ReplacedElementContainer} from '../../dom/replaced-elements/index';
-import {EffectTarget, IElementEffect, isClipEffect, isTransformEffect, isOpacityEffect} from '../effects';
-import {contains} from '../../core/bitwise';
-import {calculateGradientDirection, calculateRadius, processColorStops} from '../../css/types/functions/gradient';
-import {FIFTY_PERCENT, getAbsoluteValue} from '../../css/types/length-percentage';
-import {TEXT_DECORATION_LINE} from '../../css/property-descriptors/text-decoration-line';
-import {FontMetrics} from '../font-metrics';
-import {DISPLAY} from '../../css/property-descriptors/display';
-import {Bounds} from '../../css/layout/bounds';
-import {LIST_STYLE_TYPE} from '../../css/property-descriptors/list-style-type';
-import {computeLineHeight} from '../../css/property-descriptors/line-height';
-import {CHECKBOX, INPUT_COLOR, InputElementContainer, RADIO} from '../../dom/replaced-elements/input-element-container';
-import {TEXT_ALIGN} from '../../css/property-descriptors/text-align';
-import {TextareaElementContainer} from '../../dom/elements/textarea-element-container';
-import {SelectElementContainer} from '../../dom/elements/select-element-container';
-import {IFrameElementContainer} from '../../dom/replaced-elements/iframe-element-container';
-import {TextShadow} from '../../css/property-descriptors/text-shadow';
+import { ElementPaint, parseStackingContexts, StackingContext } from '../stacking-context';
+import { asString, Color, isTransparent } from '../../css/types/color';
+import { Logger } from '../../core/logger';
+import { ElementContainer } from '../../dom/element-container';
+import { BORDER_STYLE } from '../../css/property-descriptors/border-style';
+import { CSSParsedDeclaration } from '../../css/index';
+import { TextContainer } from '../../dom/text-container';
+import { Path, transformPath } from '../path';
+import { BACKGROUND_CLIP } from '../../css/property-descriptors/background-clip';
+import { BoundCurves, calculateBorderBoxPath, calculateContentBoxPath, calculatePaddingBoxPath } from '../bound-curves';
+import { isBezierCurve } from '../bezier-curve';
+import { Vector } from '../vector';
+import { CSSImageType, CSSLinearGradientImage, CSSRadialGradientImage, CSSURLImage, isLinearGradient, isRadialGradient } from '../../css/types/image';
+import { parsePathForBorder } from '../border';
+import { Cache } from '../../core/cache-storage';
+import { calculateBackgroundRendering, getBackgroundValueForIndex } from '../background';
+import { isDimensionToken } from '../../css/syntax/parser';
+import { TextBounds } from '../../css/layout/text';
+import { fromCodePoint, toCodePoints } from 'css-line-break';
+import { ImageElementContainer } from '../../dom/replaced-elements/image-element-container';
+import { contentBox } from '../box-sizing';
+import { CanvasElementContainer } from '../../dom/replaced-elements/canvas-element-container';
+import { SVGElementContainer } from '../../dom/replaced-elements/svg-element-container';
+import { ReplacedElementContainer } from '../../dom/replaced-elements/index';
+import { EffectTarget, IElementEffect, isClipEffect, isTransformEffect, isOpacityEffect } from '../effects';
+import { contains } from '../../core/bitwise';
+import { calculateGradientDirection, calculateRadius, processColorStops } from '../../css/types/functions/gradient';
+import { FIFTY_PERCENT, getAbsoluteValue } from '../../css/types/length-percentage';
+import { TEXT_DECORATION_LINE } from '../../css/property-descriptors/text-decoration-line';
+import { FontMetrics } from '../font-metrics';
+import { DISPLAY } from '../../css/property-descriptors/display';
+import { Bounds } from '../../css/layout/bounds';
+import { LIST_STYLE_TYPE } from '../../css/property-descriptors/list-style-type';
+import { computeLineHeight } from '../../css/property-descriptors/line-height';
+import { CHECKBOX, INPUT_COLOR, InputElementContainer, RADIO } from '../../dom/replaced-elements/input-element-container';
+import { TEXT_ALIGN } from '../../css/property-descriptors/text-align';
+import { TextareaElementContainer } from '../../dom/elements/textarea-element-container';
+import { SelectElementContainer } from '../../dom/elements/select-element-container';
+import { IFrameElementContainer } from '../../dom/replaced-elements/iframe-element-container';
+import { TextShadow } from '../../css/property-descriptors/text-shadow';
 import { processImage, isSupportedFilter } from '../image-filter';
-import {isFontColorGradient } from '../font-color-gradient'
+import { isFontColorGradient } from '../font-color-gradient'
 
 export type RenderConfigurations = RenderOptions & {
     backgroundColor: Color | null;
@@ -85,8 +85,7 @@ export class CanvasRenderer {
         this.ctx.textBaseline = 'bottom';
         this._activeEffects = [];
         Logger.getInstance(options.id).debug(
-            `Canvas renderer initialized (${options.width}x${options.height} at ${options.x},${options.y}) with scale ${
-                options.scale
+            `Canvas renderer initialized (${options.width}x${options.height} at ${options.x},${options.y}) with scale ${options.scale
             }`
         );
     }
@@ -177,20 +176,20 @@ export class CanvasRenderer {
         const [font, fontFamily, fontSize] = this.createFontStyle(styles);
 
         this.ctx.font = font;
-        let fillStyle: CanvasGradient|string = asString(styles.color);
-        if (isFontColorGradient(styles)) { 
+        let fillStyle: CanvasGradient | string = asString(styles.color);
+        if (isFontColorGradient(styles)) {
             if (isLinearGradient(styles.backgroundImage[0])) {
                 const backgroundImage = styles.backgroundImage[0] as CSSLinearGradientImage
                 const [, x, y, width, height] = calculateBackgroundRendering(container, 0, [null, null, null]);
                 const [lineLength, x0, x1, y0, y1] = calculateGradientDirection(backgroundImage.angle, width, height);
                 if (Math.round(Math.abs(x0)) === Math.round(Math.abs(x1))) {
-                    const gradient = this.ctx.createLinearGradient(x, y0+y, x, y1+y);
+                    const gradient = this.ctx.createLinearGradient(x, y0 + y, x, y1 + y);
                     processColorStops(backgroundImage.stops, lineLength).forEach(colorStop =>
                         gradient.addColorStop(colorStop.stop, asString(colorStop.color))
                     );
                     fillStyle = gradient;
-                } else if (Math.round(Math.abs(y0)) === Math.round(Math.abs(y1))) { 
-                    const gradient = this.ctx.createLinearGradient(x+x0, y, x+x1, y);
+                } else if (Math.round(Math.abs(y0)) === Math.round(Math.abs(y1))) {
+                    const gradient = this.ctx.createLinearGradient(x + x0, y, x + x1, y);
                     processColorStops(backgroundImage.stops, lineLength).forEach(colorStop =>
                         gradient.addColorStop(colorStop.stop, asString(colorStop.color))
                     );
@@ -214,7 +213,7 @@ export class CanvasRenderer {
                     processColorStops(backgroundImage.stops, rx * 2).forEach(colorStop =>
                         radialGradient.addColorStop(colorStop.stop, asString(colorStop.color))
                     );
-                    
+
                     fillStyle = radialGradient;
                 }
             }
@@ -253,7 +252,7 @@ export class CanvasRenderer {
                             // Draws a line at the baseline of the font
                             // TODO As some browsers display the line as more than 1px if the font-size is big,
                             // need to take that into account both in position and size
-                            const {baseline} = this.fontMetrics.getMetrics(fontFamily, fontSize);
+                            const { baseline } = this.fontMetrics.getMetrics(fontFamily, fontSize);
                             this.ctx.fillRect(
                                 text.bounds.left,
                                 Math.round(text.bounds.top + baseline),
@@ -267,7 +266,7 @@ export class CanvasRenderer {
                             break;
                         case TEXT_DECORATION_LINE.LINE_THROUGH:
                             // TODO try and find exact position for line-through
-                            const {middle} = this.fontMetrics.getMetrics(fontFamily, fontSize);
+                            const { middle } = this.fontMetrics.getMetrics(fontFamily, fontSize);
                             this.ctx.fillRect(
                                 text.bounds.left,
                                 Math.ceil(text.bounds.top + middle),
@@ -309,17 +308,21 @@ export class CanvasRenderer {
             if (isSupportedFilter(this.ctx) && container.styles.filterOriginal) {
                 this.ctx.filter = container.styles.filterOriginal;
             }
-            this.ctx.drawImage(
-                image,
-                0,
-                0,
-                container.intrinsicWidth,
-                container.intrinsicHeight,
-                box.left,
-                box.top,
-                box.width,
-                box.height
-            );
+
+            let newWidth;
+            let newHeight;
+            let newX = box.left;
+            let newY = box.top;
+            if (container.intrinsicWidth / box.width < container.intrinsicHeight / box.height) {
+                newWidth = box.width;
+                newHeight = container.intrinsicHeight * (box.width / container.intrinsicWidth);
+                newY = box.top + (box.height - newHeight) / 2;
+            } else {
+                newWidth = container.intrinsicWidth * (box.height / container.intrinsicHeight);
+                newHeight = box.height;
+                newX = box.left + (box.width - newWidth) / 2;
+            }
+            this.ctx.drawImage(image, 0, 0, container.intrinsicWidth, container.intrinsicHeight, newX, newY, newWidth, newHeight);
             this.ctx.restore();
         }
     }
@@ -704,10 +707,10 @@ export class CanvasRenderer {
         const hasBackground = !isTransparent(styles.backgroundColor) || styles.backgroundImage.length;
 
         const borders = [
-            {style: styles.borderTopStyle, color: styles.borderTopColor},
-            {style: styles.borderRightStyle, color: styles.borderRightColor},
-            {style: styles.borderBottomStyle, color: styles.borderBottomColor},
-            {style: styles.borderLeftStyle, color: styles.borderLeftColor}
+            { style: styles.borderTopStyle, color: styles.borderTopColor },
+            { style: styles.borderRightStyle, color: styles.borderRightColor },
+            { style: styles.borderBottomStyle, color: styles.borderBottomColor },
+            { style: styles.borderLeftStyle, color: styles.borderLeftColor }
         ];
 
         const backgroundPaintingArea = calculateBackgroundCurvedPaintingArea(
